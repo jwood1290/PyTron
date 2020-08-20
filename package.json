@@ -1,11 +1,17 @@
 {
-  "name": "pytron_dashboard",
   "version": "0.0.1",
   "private": false,
-  "homepage": "https://cityuptake.app",
+  "homepage": "http://jwood1290.github.io/PyTron",
+  "name": "PyTron",
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.3"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -25,5 +31,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^3.1.0"
   }
 }
