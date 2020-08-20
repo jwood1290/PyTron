@@ -5,9 +5,12 @@
   "name": "PyTron",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "clsx": "^1.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "^3.4.3"
+    "react-scripts": "^3.4.3",
+    "recharts": "^1.8.5"
   },
   "scripts": {
     "predeploy": "npm run build",
