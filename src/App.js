@@ -3,12 +3,12 @@ import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
+// import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import { makeStyles, CssBaseline, Drawer, AppBar, Toolbar } from '@material-ui/core';
 import { List, Typography, Divider, IconButton, Container } from '@material-ui/core';
 import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { Grid, Paper, Box } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import pkg_info from '../package.json';
 import SummaryLine from './SummaryLine.js'
