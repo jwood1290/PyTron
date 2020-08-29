@@ -21,7 +21,7 @@ function parseData(props) {
   var output = [{
     id: 'total',
     addr: 'Total',
-    trx: shortNum(dat.t_trx),
+    trx: shortNum(t_trx),
     usd: shortNum(dat.usd_total),
   }];
   dat.data.forEach(i => {
