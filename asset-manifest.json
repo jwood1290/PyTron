@@ -1,22 +1,18 @@
 {
   "files": {
-    "main.css": "/PyTron/static/css/main.34de6062.chunk.css",
-    "main.js": "/PyTron/static/js/main.1fc35dfd.chunk.js",
-    "main.js.map": "/PyTron/static/js/main.1fc35dfd.chunk.js.map",
+    "main.css": "/PyTron/static/css/main.d9e75851.chunk.css",
+    "main.js": "/PyTron/static/js/main.7033b09a.chunk.js",
     "runtime-main.js": "/PyTron/static/js/runtime-main.6e2a31ad.js",
-    "runtime-main.js.map": "/PyTron/static/js/runtime-main.6e2a31ad.js.map",
-    "static/js/2.ccb48c86.chunk.js": "/PyTron/static/js/2.ccb48c86.chunk.js",
-    "static/js/2.ccb48c86.chunk.js.map": "/PyTron/static/js/2.ccb48c86.chunk.js.map",
+    "static/js/2.06e7422d.chunk.js": "/PyTron/static/js/2.06e7422d.chunk.js",
     "index.html": "/PyTron/index.html",
-    "precache-manifest.632a92cfffb23fab97f9fd3b59f73d22.js": "/PyTron/precache-manifest.632a92cfffb23fab97f9fd3b59f73d22.js",
+    "precache-manifest.f1bf44f7b04fb3d5a30a70236fb6d348.js": "/PyTron/precache-manifest.f1bf44f7b04fb3d5a30a70236fb6d348.js",
     "service-worker.js": "/PyTron/service-worker.js",
-    "static/css/main.34de6062.chunk.css.map": "/PyTron/static/css/main.34de6062.chunk.css.map",
-    "static/js/2.ccb48c86.chunk.js.LICENSE.txt": "/PyTron/static/js/2.ccb48c86.chunk.js.LICENSE.txt"
+    "static/js/2.06e7422d.chunk.js.LICENSE.txt": "/PyTron/static/js/2.06e7422d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.6e2a31ad.js",
-    "static/js/2.ccb48c86.chunk.js",
-    "static/css/main.34de6062.chunk.css",
-    "static/js/main.1fc35dfd.chunk.js"
+    "static/js/2.06e7422d.chunk.js",
+    "static/css/main.d9e75851.chunk.css",
+    "static/js/main.7033b09a.chunk.js"
   ]
 }
