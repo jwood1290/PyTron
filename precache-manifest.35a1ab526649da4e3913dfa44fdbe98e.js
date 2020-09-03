@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6c8bfd79bd4a759c1b2cc52c2bbbbbed",
+    "revision": "fdca915d529d2e8fbf36fbcfcd4596b6",
     "url": "/PyTron/index.html"
   },
   {
-    "revision": "864cfc8d3f1a10eb21aa",
+    "revision": "cf0abb741e85a640a40b",
     "url": "/PyTron/static/css/main.d9e75851.chunk.css"
   },
   {
-    "revision": "ff9228c4b5306643f89a",
-    "url": "/PyTron/static/js/2.06e7422d.chunk.js"
+    "revision": "dcc4b9e6e2022b624f65",
+    "url": "/PyTron/static/js/2.de8c2695.chunk.js"
   },
   {
     "revision": "165a9b46e2176d7a45887d95788fcb35",
-    "url": "/PyTron/static/js/2.06e7422d.chunk.js.LICENSE.txt"
+    "url": "/PyTron/static/js/2.de8c2695.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "864cfc8d3f1a10eb21aa",
-    "url": "/PyTron/static/js/main.7033b09a.chunk.js"
+    "revision": "cf0abb741e85a640a40b",
+    "url": "/PyTron/static/js/main.7d1a8c3c.chunk.js"
   },
   {
     "revision": "7c1eec189c78f3f2b106",
