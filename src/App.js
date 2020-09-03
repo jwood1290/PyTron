@@ -3,7 +3,12 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Dashboard from './Dashboard.js';
 import Login from './Login.js';
 import GetHistory from './Database.js';
-import { demo_data } from './data/demo_data.js';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default class App extends Component {
   constructor(props) {
@@ -11,17 +16,37 @@ export default class App extends Component {
 
     this.state = {
       currPage: 'login',
+      hasError: false,
+      failedLogin: false,
       is_mobile: ((window.innerWidth || window.outerWidth) < 750),
-      data: demo_data
+      data: null,
     }
   }
 
-  loadDashboard = async () => {
-    const data = await GetHistory();
-    this.setState({
-      currPage: 'dashboard',
-      data: data,
-    });
+  changeState = (k,v) => {
+    this.setState({k,v});
+  }
+
+  loadDashboard = async (demo=false) => {
+    const data = await GetHistory(demo);
+    if (data !== null) {
+      this.setState({
+        currPage: 'dashboard',
+        failedLogin: false,
+        data: data,
+      });
+    } else {
+      this.setState({
+        failedLogin: true,
+        hasError:true,
+      });
+    }
+  };
+
+  handleClose = (event, reason) => {
+    if (reason !== 'clickaway') {
+      this.setState({hasError:false});
+    }
   };
 
   render() {
@@ -46,12 +71,21 @@ export default class App extends Component {
         secondary: { main:orange },
       }
     });
-    const appProps = {...this.state,login: this.loadDashboard};
+    const appProps = {...this.state,login:this.loadDashboard,changeState:this.changeState};
     const page = getPage(appProps);
 
     return (
       <ThemeProvider theme={darkTheme}>
         {page}
+        <Snackbar 
+          open={this.state.hasError} 
+          autoHideDuration={6000} 
+          onClose={(e,r) => {this.handleClose(e,r)}}
+        >
+          <Alert onClose={(e,r) => {this.handleClose(e,r)}} severity="warning">
+            Unable to connect to database. Try again later.
+          </Alert>
+        </Snackbar>
       </ThemeProvider>
     );
   }

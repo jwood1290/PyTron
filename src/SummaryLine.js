@@ -60,7 +60,7 @@ export default function Summary(props) {
             dataKey="time" 
             stroke={theme.palette.text.secondary} 
             height={50}
-            interval={0}
+            interval={props.winwidth < 500 ? 'preserveStartEnd':0}
             tick={<CustomizedAxisTick {...{stroke:theme.palette.text.secondary}} />}
           />
           <YAxis stroke={theme.palette.text.secondary}>

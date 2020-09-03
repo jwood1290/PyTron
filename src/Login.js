@@ -1,6 +1,7 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Backdrop from '@material-ui/core/Backdrop';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -39,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     position: 'relative',
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.secondary.main,
+  }
 }));
 
 export default function Login(props) {
@@ -103,9 +108,15 @@ export default function Login(props) {
             >
               Sign In
             </Button>
-            {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            {/*loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            <Backdrop className={classes.buttonProgress} open={loading}>
+              <CircularProgress color="inherit" />
+            </Backdrop>*/}
           </div>
         </form>
+        <Backdrop className={classes.backdrop} open={props.failedLogin ? false:loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     </Container>
   );

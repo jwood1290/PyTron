@@ -115,6 +115,14 @@ const useStyles = makeStyles((theme) => ({
   radio: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  radioCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  toolbarNoFlex: {
+    display: 'initial',
+    minHeight: 'fit-content',
   }
 }));
 
@@ -124,7 +132,7 @@ export default function Dashboard(props) {
   const midHeightPaper = clsx(classes.paper, classes.midHeight);
   const midHeightTable = clsx(classes.paper, classes.table);
   const [currency,setCurrency] = React.useState('trx');
-  const [token_id,changeToken] = React.useState('TRX');
+  const [token_id,changeToken] = React.useState('TRX15');
   const [winwidth,setWidth] = React.useState(window.innerWidth || window.outerWidth);
 
   React.useEffect(() => {
@@ -145,11 +153,18 @@ export default function Dashboard(props) {
     changeToken(event.target.value);
   };
 
-  const is_trx = (currency === 'trx');
-  const lineData = is_trx ? props.data.trx:props.data.usd;
-  const chartData = props.data.last;
-  props = {...props,classes,is_trx,winwidth,lineData,chartData,token_id};
+  var show = true;
+  if (props.data === null) {
+    props.login(true);
+    show = false;
+  } else {
+    const is_trx = (currency === 'trx');
+    const lineData = is_trx ? props.data.trx:props.data.usd;
+    const chartData = props.data.last;
+    props = {...props,classes,is_trx,winwidth,lineData,chartData,token_id};
+  }
 
+  const is_mobile = (winwidth < 500);
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -165,7 +180,7 @@ export default function Dashboard(props) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <main className={classes.content}>
+      {show ? (<main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
@@ -180,7 +195,7 @@ export default function Dashboard(props) {
                     name="currency1" 
                     value={currency} 
                     onChange={toggleCurrency} 
-                    row
+                    row={!is_mobile}
                     className={classes.radio}
                   >
                     <FormControlLabel value="trx" control={<Radio />} label="TRX" />
@@ -202,7 +217,7 @@ export default function Dashboard(props) {
             </Grid>
             <Grid item xs={12}>
               <Paper className={midHeightTable}>
-                <Toolbar disableGutters>
+                <Toolbar disableGutters className={is_mobile ? classes.toolbarNoFlex:null}>
                   <Typography variant="h5" color="primary" gutterBottom className={classes.subTitle}>
                     Asset History
                   </Typography>
@@ -212,9 +227,9 @@ export default function Dashboard(props) {
                     value={token_id} 
                     onChange={toggleHistory} 
                     row
-                    className={classes.radio}
+                    className={is_mobile ? classes.radioCenter:classes.radio}
                   >
-                    <FormControlLabel value="TRX" control={<Radio />} label="TRX" />
+                    <FormControlLabel value="TRX15" control={<Radio />} label="TRX" />
                     <FormControlLabel value="COTI" control={<Radio />} label="COTI" />
                     <FormControlLabel value="FUND" control={<Radio />} label="FUND" />
                   </RadioGroup>
@@ -224,7 +239,7 @@ export default function Dashboard(props) {
             </Grid>
           </Grid>
         </Container>
-      </main>
+      </main>):null}
     </div>
   );
 }
