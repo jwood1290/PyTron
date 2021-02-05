@@ -164,6 +164,14 @@ export default function Dashboard(props) {
     props = {...props,classes,is_trx,winwidth,lineData,chartData,token_id};
   }
 
+  var token_choices = [<FormControlLabel value="TRX15" control={<Radio />} label="TRX" key="TRX"/>];
+  const skip_names = ['TRX15','last','trx','usd']
+  for (const name in props.data) {
+    if (!(skip_names.includes(name))) {
+      token_choices.push(<FormControlLabel value={name} control={<Radio />} label={name} key={name}/>)
+    }
+  }
+
   const is_mobile = (winwidth < 500);
   return (
     <div className={classes.root}>
@@ -229,9 +237,7 @@ export default function Dashboard(props) {
                     row
                     className={is_mobile ? classes.radioCenter:classes.radio}
                   >
-                    <FormControlLabel value="TRX15" control={<Radio />} label="TRX" />
-                    <FormControlLabel value="COTI" control={<Radio />} label="COTI" />
-                    <FormControlLabel value="FUND" control={<Radio />} label="FUND" />
+                    {token_choices}
                   </RadioGroup>
                 </Toolbar>
                 <HistoryChart {...props} />
