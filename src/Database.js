@@ -133,10 +133,7 @@ async function get_other_history(url,demo) {
     }
   }
 
-  var output = {
-    COTI:[],
-    FUND:[]
-  };
+  var output = {};
   const key_arr = Object.keys(data);
   key_arr.forEach(k => {
     if (k !== '_id' && k !== 'last_updated') {
@@ -155,6 +152,9 @@ async function get_other_history(url,demo) {
         const p_gain = (last_amt > 0) ? (shortNum(100*(i.amount - last_amt)/last_amt,2) + '%'):'';
         const v_gain = (last_amt > 0) ? (shortNum(i.p_gain,2) + '%'):'';
         const val = i.amount*i.usd;
+        if (!(k in output)) {
+          output[k] = []; 
+        }
         output[k].push({
           month:count,
           date:date_abbr,
