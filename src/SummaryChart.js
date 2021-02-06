@@ -24,6 +24,7 @@ function parseData(props) {
     trx: shortNum(t_trx),
     usd: shortNum(dat.usd_total),
   }];
+  dat.data.sort((a, b) => (a.trx < b.trx) ? 1:-1)
   dat.data.forEach(i => {
     var a = i.address;
     var is_short = (props.winwidth < 720);
