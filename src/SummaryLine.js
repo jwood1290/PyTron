@@ -79,7 +79,9 @@ export default function Summary(props) {
   const theme = useTheme();
   var data = [];
   var lines = [];
+  var y_axis_label;
   if (props.is_split) {
+    y_axis_label = props.is_trx ? 'Token Total (M)':'USD Total ($K)';
     const data_keys = Object.keys(props.data);
     const split_data = parseSplitData(props.data.split_data,data_keys,props.is_trx);
     const color_palette = ['#E8782B','#B34C00','#761700','#BBA79C','#DFE0DF']
@@ -96,6 +98,7 @@ export default function Summary(props) {
       />);
     }
   } else {
+    y_axis_label = props.is_trx ? 'TRX Total (M)':'USD Total ($K)';
     data = createData(props.data,props.is_trx);
     lines.push(<Line
       key='1'
@@ -106,7 +109,6 @@ export default function Summary(props) {
     />);
   }
 
-  var y_axis_label = props.is_trx ? 'TRX Total (M)':'USD Total ($K)';
   return (
     <React.Fragment>
       <ResponsiveContainer>

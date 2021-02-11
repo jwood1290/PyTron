@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'Center',
     fontWeight: 'bold',
     flexGrow: 1,
-    paddingLeft: '39px',
+    // paddingLeft: '39px',
   },
   subTitle: {
     flexGrow: 1,
@@ -161,12 +161,17 @@ export default function Dashboard(props) {
   };
 
   var show = true;
+  var last_date = 'DEMO';
   if (props.data === null) {
     props.login(true);
     show = false;
   } else {
     const is_trx = (currency === 'trx');
     const chartData = props.data.last;
+    const dt = new Date(chartData.epoch*1000);
+    const year = String(dt.getFullYear()).substring(2,4);
+    last_date = String(dt.getMonth() + 1) + "/" + String(dt.getDate()) + "/" + year;
+
     props = {...props,classes,is_trx,winwidth,chartData,token_id,is_split};
   }
 
@@ -179,19 +184,35 @@ export default function Dashboard(props) {
   }
 
   const is_mobile = (winwidth < 500);
+  const dash_title = is_mobile ? 'PyTron':'PyTron Dashboard';
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <Typography component="h1" variant="h5" color="primary" noWrap className={classes.title}>
-            <Box fontWeight="fontWeightBold" m={1}>
-              PyTron Dashboard
-            </Box>
-          </Typography>
-          <Typography variant="body2" color="primary" align="right">
-            {'v' + pkg_info.version}
-          </Typography>
+          <Grid
+            container
+            direction="row"
+            justify="space-between"
+            alignItems="center">
+            <Grid item xs>
+              <Typography variant="body2" color="primary" align="left">
+                {'Updated: ' + last_date}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography component="h1" variant="h5" color="primary" noWrap className={classes.title}>
+                <Box fontWeight="fontWeightBold" m={1}>
+                  {dash_title}
+                </Box>
+              </Typography>
+            </Grid>
+            <Grid item xs>
+              <Typography variant="body2" color="primary" align="right">
+                {'v' + pkg_info.version}
+              </Typography>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
       {show ? (<main className={classes.content}>
