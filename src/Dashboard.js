@@ -11,7 +11,9 @@ import Chart from './SummaryChart.js';
 import HistoryChart from './HistoryChart.js';
 import { makeStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
+import Switch from '@material-ui/core/Switch';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 
@@ -131,7 +133,8 @@ export default function Dashboard(props) {
   const classes = useStyles();
   const midHeightPaper = clsx(classes.paper, classes.midHeight);
   const midHeightTable = clsx(classes.paper, classes.table);
-  const [currency,setCurrency] = React.useState('trx');
+  const [currency,setCurrency] = React.useState('usd');
+  const [is_split,setSplit] = React.useState(false);
   const [token_id,changeToken] = React.useState('TRX15');
   const [winwidth,setWidth] = React.useState(window.innerWidth || window.outerWidth);
 
@@ -153,19 +156,22 @@ export default function Dashboard(props) {
     changeToken(event.target.value);
   };
 
+  const toggleSplit = (event) => {
+    setSplit(event.target.checked);
+  };
+
   var show = true;
   if (props.data === null) {
     props.login(true);
     show = false;
   } else {
     const is_trx = (currency === 'trx');
-    const lineData = is_trx ? props.data.trx:props.data.usd;
     const chartData = props.data.last;
-    props = {...props,classes,is_trx,winwidth,lineData,chartData,token_id};
+    props = {...props,classes,is_trx,winwidth,chartData,token_id,is_split};
   }
 
   var token_choices = [<FormControlLabel value="TRX15" control={<Radio />} label="TRX" key="TRX"/>];
-  const skip_names = ['TRX15','last','trx','usd']
+  const skip_names = ['TRX15','last','trx','usd','split_data']
   for (const name in props.data) {
     if (!(skip_names.includes(name))) {
       token_choices.push(<FormControlLabel value={name} control={<Radio />} label={name} key={name}/>)
@@ -206,9 +212,15 @@ export default function Dashboard(props) {
                     row={!is_mobile}
                     className={classes.radio}
                   >
-                    <FormControlLabel value="trx" control={<Radio />} label="TRX" />
                     <FormControlLabel value="usd" control={<Radio />} label="USD" />
+                    <FormControlLabel value="trx" control={<Radio />} label="TRX" />
                   </RadioGroup>
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={<Switch checked={is_split} onChange={toggleSplit} />}
+                      label="Split"
+                    />
+                  </FormGroup>
                 </Toolbar>
                 <Line {...props}/>
               </Paper>

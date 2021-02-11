@@ -9,100 +9,101 @@ function shortNum(n,p) {
 }
 
 function get_even_data(data,n) {
-  const skip = Math.floor(data.length/(n-1));
-  var output = [];
-  for (var i=0; i < n-1; i++) {
-    output.push(data[i*skip]);
+  var output = [data[0]];
+  var totalItems = data.length - 2;
+  var interval = Math.floor(totalItems/(n - 2));
+  for (var i = 1; i < (n-1); i++) {
+      output.push(data[i * interval]);
   }
-  output.push(data[data.length-1]);
+  output.push(data[data.length - 1]);
   return output;
 }
 
+function epoch_to_str(e,add_day=true) {
+  const dt = new Date(e);
+  const day = dt.getDate();
+  const year = String(dt.getFullYear()).substring(2,4);
+  const month = String(dt.toLocaleString('default', {month:'short'}));
+  if (add_day) {
+    return month + " " + String(day) + " '" + year;
+  } else {
+    return month + " '" + year;
+  }
+}
+
 function parseData(data) {
-  var dt, day, month, year, curr_trx;
-  var curr_usd, total_trx, ex_rate, date_str;
+  var curr_trx, curr_usd, total_trx, ex_rate;
   var output = [];
   var count = 0;
   var last_trx = 0;
   var last_usd = 0;
-  var last_day = -1;
   data.forEach(i => {
-    dt = new Date(i.epoch*1000);
-    day = dt.getDate();
-    if (last_day < 0) {last_day = day};
-    if (day === 15 && last_day !== 15) {
-      curr_trx = 0;
-      total_trx = 0;
-      i.data.forEach(j => {
-        if (j.address !== 'COTI' && j.address !== 'FUND') {
-          curr_trx += j.trx;
-        }
-        total_trx += j.trx;
-      })
-      if (last_trx === 0) {last_trx = curr_trx};
-      if (last_usd === 0) {last_usd = i.usd_total};
-      ex_rate = shortNum(i.usd_total/total_trx,4);
-      year = String(dt.getFullYear()).substring(2,4);
-      month = String(dt.toLocaleString('default', {month:'short'}));
-      date_str = month + " " + String(day) + " '" + year;
-      curr_usd = shortNum(curr_trx*ex_rate,2);
-      output.push({
-        month: count,
-        date: date_str,
-        amt: shortNum(curr_trx,2),
-        gain: shortNum(curr_trx - last_trx,2),
-        price: '$' + ex_rate,
-        value: '$' + curr_usd,
-        p_gain: shortNum(100*(curr_trx - last_trx)/last_trx,2) + '%',
-        v_gain: shortNum(100*(curr_usd - last_usd)/last_usd,2) + '%',
-      });
-      count += 1;
-      last_trx = curr_trx;
-      last_usd = curr_usd;
-    }
-    last_day = day;
+    curr_trx = 0;
+    total_trx = 0;
+    i.data.forEach(j => {
+      if (j.address.length > 10) {
+        curr_trx += j.trx;
+      }
+      total_trx += j.trx;
+    })
+    if (last_trx === 0) {last_trx = curr_trx};
+    if (last_usd === 0) {last_usd = i.usd_total};
+    ex_rate = shortNum(i.usd_total/total_trx,4);
+    curr_usd = shortNum(curr_trx*ex_rate,2);
+
+    output.push({
+      month: count,
+      date: epoch_to_str(i.epoch*1000),
+      amt: shortNum(curr_trx,2),
+      gain: shortNum(curr_trx - last_trx,2),
+      price: '$' + ex_rate,
+      value: '$' + curr_usd,
+      p_gain: shortNum(100*(curr_trx - last_trx)/last_trx,2) + '%',
+      v_gain: shortNum(100*(curr_usd - last_usd)/last_usd,2) + '%',
+    });
+    count += 1;
+    last_trx = curr_trx;
+    last_usd = curr_usd;
   })
   return output;
 }
 
-async function get_24h_history(url) {
+function parse_url(url) {
   return fetch(url)
   .then(res => res.json())
-  .then(
-    res => EJSON.parse(JSON.stringify(res)),
-    err => console.log('Error in get_24h_history: ' + err)
-  ).catch(err => console.log(err))
+  .then(res => EJSON.parse(JSON.stringify(res)))
+  .catch(err => console.log('Error parsing URL: ' + err))
 }
 
 async function get_data(url,demo) {
   var all_data = [];
   var reduced_data = [];
   if (demo) {
-    all_data = history;
+    all_data = history.filter(i => {
+      const dt = epoch_to_str(i.epoch*1000);
+      return dt.includes('15')
+    });
+    all_data.push(history[history.length-1]);
   } else {
     try {
-      all_data = await get_24h_history(url);
+      all_data = await parse_url(url);
     } catch (err) {
       console.log(err);
       all_data = history;
     }
   }
-  const TRX15 = parseData(all_data);
+  var TRX15 = parseData(all_data);
   reduced_data = get_even_data(all_data,10);
 
   var trx = [];
   var usd = [];
   var last = [];
-  var amt, dt;
   reduced_data.forEach(i => {
-    amt = 0;
-    i.data.forEach(j => {
+    var amt = 0;
+    const date_abbr = epoch_to_str(i.epoch*1000,false);
+    i.data.forEach(j => { 
       amt = amt + j.trx;
     })
-    dt = new Date(i.epoch*1000);
-    var year = String(dt.getFullYear()).substring(2,4);
-    var month = dt.toLocaleString('default', {month:'short'});
-    var date_abbr = month + " '" + year;
     amt = Math.round(amt*100)/100;
     trx.push([amt,date_abbr]);
     usd.push([i.usd_total,date_abbr]);
@@ -111,22 +112,13 @@ async function get_data(url,demo) {
   return {trx,usd,last,TRX15};
 }
 
-async function get_others(url) {
-  return fetch(url)
-  .then(res => res.json())
-  .then(
-    res => EJSON.parse(JSON.stringify(res)),
-    err => console.log('Error in get_24h_history: ' + err)
-  ).catch(err => console.log(err))
-}
-
-async function get_other_history(url,demo) {
+async function get_other_history(url,trx_data,demo) {
   var data = {};
   if (demo) {
     data = other_data;
   } else {
     try {
-      data = await get_others(url);
+      data = await parse_url(url);
     } catch (err) {
       console.log(err);
       data = other_data;
@@ -134,52 +126,76 @@ async function get_other_history(url,demo) {
   }
 
   var output = {};
-  const key_arr = Object.keys(data);
-  key_arr.forEach(k => {
+  for (const [k,v] of Object.entries(data)) {
     if (k !== '_id' && k !== 'last_updated') {
+      output[k] = [];
       var count = 0;
-      var last_amt = 0;
-      data[k].forEach(i => {
-        const dt = new Date(i.epoch*1000);
-        const year = String(dt.getFullYear()).substring(2,4);
-        const month = dt.toLocaleString('default', {month:'short'});
-        const day = String(dt.getDate());
-        const date_abbr = month + " " + day + " '" + year;
-        const gain = i.amount - last_amt;
-        if (last_amt > 0) {
-          console.log([(100*(i.amount - last_amt)/last_amt),last_amt,gain]);
+      const month_diff = trx_data.length - v.length;
+      if (month_diff > 0) {
+        for (const m of Array(month_diff).keys()) {
+          output[k].push({
+            month:count,
+            date:trx_data[m].date,
+            amt:0,
+            gain:0,
+            p_gain:'',
+            price:'',
+            value:'',
+            v_gain:'',
+            avg_p:'',
+          });
+          count = count + 1;
         }
+      }
+      v.forEach(i => {
+        var last_amt = 0;
+        if (output[k].length > 0) {
+          last_amt = output[k][output[k].length - 1].amt;
+        }
+        const gain = i.amount - last_amt;
         const p_gain = (last_amt > 0) ? (shortNum(100*(i.amount - last_amt)/last_amt,2) + '%'):'';
         const v_gain = (last_amt > 0) ? (shortNum(i.p_gain,2) + '%'):'';
         const val = i.amount*i.usd;
-        if (!(k in output)) {
-          output[k] = []; 
-        }
+        const m = output[k].length;
         output[k].push({
-          month:count,
-          date:date_abbr,
+          month:m,
+          date:epoch_to_str(i.epoch*1000),
           amt:shortNum(i.amount,2),
-          gain:(gain > 0) ? shortNum(gain,2):0,
+          gain:(gain !== 0) ? shortNum(gain,2):0,
           p_gain:p_gain,
           price:(i.usd > 0) ? '$' + shortNum(i.usd,4):'',
-          value:(val > 0) ? '$' + shortNum(val,2):'',
+          value:(val !== 0) ? '$' + shortNum(val,2):'',
           v_gain:v_gain,
           avg_p:(i.b_price) ? '$' + shortNum(i.b_price,4):'',
         })
-        count = count + 1;
         last_amt = i.amount;
       })
     }
-  })
+  }
   return output;  
 }
 
 async function get_all_data(demo) {
-  const trx_url = process.env.REACT_APP_LOGIN_URL + process.env.REACT_APP_LOGIN_PASS;
+  // const trx_url = process.env.REACT_APP_LOGIN_URL + process.env.REACT_APP_LOGIN_PASS;
+  const trx_url = process.env.REACT_APP_FILTERED_URL + process.env.REACT_APP_LOGIN_PASS;
   const other_url = process.env.REACT_APP_OTHER_URL + process.env.REACT_APP_LOGIN_PASS;
   const trx_data = await get_data(trx_url,demo);
-  const other_tokens = await get_other_history(other_url,demo);
-  return {...trx_data,...other_tokens};
+  const other_tokens = await get_other_history(other_url,trx_data.TRX15,demo);
+  var output = {...trx_data,...other_tokens};
+
+  var split_data = output.TRX15.sort((a, b) => (a.month > b.month) ? 1:-1);
+  var o_keys = Object.keys(output);
+
+  o_keys.forEach(o => {
+    if (!(['trx','usd','last','TRX15'].includes(o))) {
+      var tmp_data = output[o].sort((a, b) => (a.month > b.month) ? 1:-1);
+      for (const count of Array(split_data.length).keys()) {
+        split_data[count][o] = {amt:tmp_data[count].amt,value:tmp_data[count].value};
+      }
+    }
+  })
+  output.split_data = get_even_data(split_data,10);
+  return output;
 }
 
 export default function GetHistory(isDemo=false) {

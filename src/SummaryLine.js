@@ -6,11 +6,14 @@ import {
   XAxis,
   YAxis,
   Label,
+  Legend,
+  Tooltip,
   ResponsiveContainer,
 } from 'recharts';
 
-function createData(data,trx) {
+function createData(input,trx) {
   var output = [];
+  const data = trx ? input.trx:input.usd;
   data.forEach(i => {
     var amt = i[0];
     if (trx) {
@@ -24,6 +27,37 @@ function createData(data,trx) {
     })
   })
   return output;
+}
+
+function parseSplitData(data,k_list,trx) {
+  var output = [];
+  var tokens = ['TRX'];
+  data.forEach(i => {
+    const date = i.date.substr(0,4) + i.date.substr(7);
+    const trx_amt = trx ? Math.round(i.amt/100000)/10:Math.round(parseFloat(i.value.substr(1))/100)/10;
+    var tmp_data = {
+      time:date,
+      TRX: trx_amt
+    }
+    for (const [k,v] of Object.entries(i)) {
+      if (k_list.includes(k)) {
+        if (!tokens.includes(k)) { tokens.push(k) };
+        var amt = trx ? v.amt:v.value;
+        if (amt === "") {amt = 0};
+        if (v.amt > 0) {
+          if (trx) {
+            amt = Math.round(amt/100000)/10;
+          } else {
+            amt = parseFloat(amt.substr(1));
+            amt = Math.round(amt/100)/10;
+          }
+        }
+        tmp_data[k] = amt;
+      }
+    }
+    output.push(tmp_data);
+  })
+  return {output,tokens};
 }
 
 class CustomizedAxisTick extends PureComponent {
@@ -43,7 +77,36 @@ class CustomizedAxisTick extends PureComponent {
 
 export default function Summary(props) {
   const theme = useTheme();
-  const data = createData(props.lineData,props.is_trx);
+  var data = [];
+  var lines = [];
+  if (props.is_split) {
+    const data_keys = Object.keys(props.data);
+    const split_data = parseSplitData(props.data.split_data,data_keys,props.is_trx);
+    const color_palette = ['#E8782B','#B34C00','#761700','#BBA79C','#DFE0DF']
+    data = split_data.output;
+    for (var i=0; i < split_data.tokens.length; i++) {
+      var k = split_data.tokens[i];
+      lines.push(<Line
+        name={k}
+        key={k}
+        type="monotone"
+        stroke={color_palette[i]}
+        dataKey={k}
+        dot={false}
+      />);
+    }
+  } else {
+    data = createData(props.data,props.is_trx);
+    lines.push(<Line
+      key='1'
+      type="monotone"
+      dataKey="amount"
+      stroke={theme.palette.primary.main}
+      dot={false}
+    />);
+  }
+
+  var y_axis_label = props.is_trx ? 'TRX Total (M)':'USD Total ($K)';
   return (
     <React.Fragment>
       <ResponsiveContainer>
@@ -73,15 +136,12 @@ export default function Summary(props) {
                 fill: theme.palette.text.primary,
               }}
             >
-              {props.is_trx ? 'TRX Total (M)':'USD Total ($K)'}
+              {y_axis_label}
             </Label>
           </YAxis>
-          <Line
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
+          {(props.is_split) ? <Tooltip />:null}
+          {(props.is_split) ? <Legend />:null}
+          {lines}
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>

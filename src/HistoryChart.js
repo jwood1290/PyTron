@@ -10,7 +10,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 export default function HistoryChart(props) {
 
   const chartToken = props.token_id || 'TRX15';
-  const data = props.data[chartToken];
+  const data = props.data[chartToken].sort((a, b) => (a.month < b.month) ? 1:-1);
   const tokenDisplay = (chartToken === 'TRX15') ? 'TRX':chartToken;
 
   return (
