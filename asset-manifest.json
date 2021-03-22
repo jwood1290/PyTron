@@ -1,11 +1,11 @@
 {
   "files": {
     "main.css": "/PyTron/static/css/main.d9e75851.chunk.css",
-    "main.js": "/PyTron/static/js/main.57baf978.chunk.js",
+    "main.js": "/PyTron/static/js/main.251474a2.chunk.js",
     "runtime-main.js": "/PyTron/static/js/runtime-main.6e2a31ad.js",
     "static/js/2.beec8398.chunk.js": "/PyTron/static/js/2.beec8398.chunk.js",
     "index.html": "/PyTron/index.html",
-    "precache-manifest.fa700eae1e659bb5d66e3b47d18a42d3.js": "/PyTron/precache-manifest.fa700eae1e659bb5d66e3b47d18a42d3.js",
+    "precache-manifest.097a7bd6acd27ebdebe86b80f2267286.js": "/PyTron/precache-manifest.097a7bd6acd27ebdebe86b80f2267286.js",
     "service-worker.js": "/PyTron/service-worker.js",
     "static/js/2.beec8398.chunk.js.LICENSE.txt": "/PyTron/static/js/2.beec8398.chunk.js.LICENSE.txt"
   },
@@ -13,6 +13,6 @@
     "static/js/runtime-main.6e2a31ad.js",
     "static/js/2.beec8398.chunk.js",
     "static/css/main.d9e75851.chunk.css",
-    "static/js/main.57baf978.chunk.js"
+    "static/js/main.251474a2.chunk.js"
   ]
 }
