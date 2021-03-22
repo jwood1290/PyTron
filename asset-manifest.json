@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/PyTron/static/css/main.d9e75851.chunk.css",
-    "main.js": "/PyTron/static/js/main.2629107f.chunk.js",
+    "main.js": "/PyTron/static/js/main.0664178e.chunk.js",
     "runtime-main.js": "/PyTron/static/js/runtime-main.6e2a31ad.js",
-    "static/js/2.311976c3.chunk.js": "/PyTron/static/js/2.311976c3.chunk.js",
+    "static/js/2.eb26474b.chunk.js": "/PyTron/static/js/2.eb26474b.chunk.js",
     "index.html": "/PyTron/index.html",
-    "precache-manifest.d2c4bd205290df5871c026700d9525e3.js": "/PyTron/precache-manifest.d2c4bd205290df5871c026700d9525e3.js",
+    "precache-manifest.f1d57de9a83d5b4f433862eb36e7d058.js": "/PyTron/precache-manifest.f1d57de9a83d5b4f433862eb36e7d058.js",
     "service-worker.js": "/PyTron/service-worker.js",
-    "static/js/2.311976c3.chunk.js.LICENSE.txt": "/PyTron/static/js/2.311976c3.chunk.js.LICENSE.txt"
+    "static/js/2.eb26474b.chunk.js.LICENSE.txt": "/PyTron/static/js/2.eb26474b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.6e2a31ad.js",
-    "static/js/2.311976c3.chunk.js",
+    "static/js/2.eb26474b.chunk.js",
     "static/css/main.d9e75851.chunk.css",
-    "static/js/main.2629107f.chunk.js"
+    "static/js/main.0664178e.chunk.js"
   ]
 }
