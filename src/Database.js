@@ -1,5 +1,6 @@
 import { history } from './data/history.js';
 import { other_data } from './data/other_token_data.js';
+import { demo_breakdown_data } from './data/demo_breakdown.js';
 
 const { EJSON } = require('bson');
 
@@ -152,15 +153,21 @@ async function get_other_history(url,trx_data,demo) {
         if (output[k].length > 0) {
           last_amt = output[k][output[k].length - 1].amt;
         }
-        const gain = i.amount - last_amt;
-        const p_gain = (last_amt > 0) ? (shortNum(100*(i.amount - last_amt)/last_amt,2) + '%'):'';
-        const v_gain = (last_amt > 0) ? (shortNum(i.p_gain,2) + '%'):'';
-        const val = i.amount*i.usd;
         const m = output[k].length;
+        var curr_amt = i.amount;
+        if (m === trx_data.length - 1) {
+          if (epoch_to_str(i.epoch*1000) !== trx_data[m].date) {
+            curr_amt = 0;
+          }
+        }
+        const gain = curr_amt - last_amt;
+        const p_gain = (last_amt > 0) ? (shortNum(100*(curr_amt - last_amt)/last_amt,2) + '%'):'';
+        const v_gain = (last_amt > 0 && curr_amt > 0) ? (shortNum(i.p_gain,2) + '%'):'';
+        const val = curr_amt*i.usd;
         output[k].push({
           month:m,
           date:epoch_to_str(i.epoch*1000),
-          amt:shortNum(i.amount,2),
+          amt:shortNum(curr_amt,2),
           gain:(gain !== 0) ? shortNum(gain,2):0,
           p_gain:p_gain,
           price:(i.usd > 0) ? '$' + shortNum(i.usd,4):'',
@@ -168,17 +175,33 @@ async function get_other_history(url,trx_data,demo) {
           v_gain:v_gain,
           avg_p:(i.b_price) ? '$' + shortNum(i.b_price,4):'',
         })
-        last_amt = i.amount;
+        last_amt = curr_amt;
       })
     }
   }
   return output;  
 }
 
+async function get_breakdown(url,demo) {
+  var data = {};
+  if (demo) {
+    data = demo_breakdown_data;
+  } else {
+    try {
+      data = await parse_url(url);
+    } catch (err) {
+      console.log(err);
+      data = demo_breakdown_data;
+    }
+  }
+
+  return data;
+}
+
 async function get_all_data(demo) {
-  // const trx_url = process.env.REACT_APP_LOGIN_URL + process.env.REACT_APP_LOGIN_PASS;
   const trx_url = process.env.REACT_APP_FILTERED_URL + process.env.REACT_APP_LOGIN_PASS;
   const other_url = process.env.REACT_APP_OTHER_URL + process.env.REACT_APP_LOGIN_PASS;
+  const breakdown_url = process.env.REACT_APP_BREAKDOWN_URL + process.env.REACT_APP_LOGIN_PASS;
   const trx_data = await get_data(trx_url,demo);
   const other_tokens = await get_other_history(other_url,trx_data.TRX15,demo);
   var output = {...trx_data,...other_tokens};
@@ -194,6 +217,7 @@ async function get_all_data(demo) {
       }
     }
   })
+  output.breakdown = await get_breakdown(breakdown_url,demo);
   output.split_data = get_even_data(split_data,10);
   return output;
 }

@@ -13,16 +13,14 @@ function shortNum(n) {
 
 function parseData(props) {
   const dat = props.chartData;
-  var t_trx = 0;
-  dat.data.forEach(i => {
-    t_trx += i.trx;
-  })
-  var ex_rate = dat.usd_total/t_trx;
+  const t_trx = props.data.trx[props.data.trx.length-1][0];
+  const t_usd = props.data.usd[props.data.usd.length-1][0];
+  const ex_rate = t_usd/t_trx;
   var output = [{
     id: 'total',
     addr: 'Total',
     trx: shortNum(t_trx),
-    usd: shortNum(dat.usd_total),
+    usd: shortNum(t_usd),
   }];
   dat.data.sort((a, b) => (a.trx < b.trx) ? 1:-1)
   dat.data.forEach(i => {
