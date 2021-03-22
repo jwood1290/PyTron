@@ -295,7 +295,7 @@ export default function Dashboard(props) {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={midHeightPaper}>
-                <Toolbar disableGutters>
+                <Toolbar disableGutters className={is_mobile ? classes.toolbarNoFlex:null}>
                   <Typography variant="h5" color="primary" gutterBottom className={classes.subTitle}>
                     Token Breakdown
                   </Typography>
