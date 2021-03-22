@@ -1,5 +1,6 @@
-export const demo_breakdown_data = {
-  "TLzBpvsrRBLfjK58mLQnaQFWXRMkwYxYUS": {
+export const demo_breakdown_data = [
+  {
+    "_id": "TLzBpvsrRBLfjK58mLQnaQFWXRMkwYxYUS",
     "tokens": [
       [
         "TRX",
@@ -8,76 +9,79 @@ export const demo_breakdown_data = {
       ],
       [
         "TRX (Frozen)",
-        50.0,
-        50.0
+        50,
+        50
       ],
       [
         "BTT",
         220.769591,
-        12.612156367314249
+        13.444426552718
       ],
       [
         "WIN",
         6117.25849,
-        39.942885224246304
+        39.80306365866622
       ],
       [
         "JST",
         106.24578979088079,
-        180.47757810026997
+        176.95595478000115
       ],
       [
         "TRUC",
-        127155575.0,
+        127155575,
         63577.7875
       ],
       [
         "BTZC",
         161.446499,
-        11.26412223523
+        10.9460726322
       ],
       [
         "BITC",
-        4819928.0,
+        4819928,
         59.561060097928
       ],
       [
         "CITY",
-        652500.0,
-        652500.0
+        652500,
+        652500
       ],
       [
         "EXT",
-        814901.0,
+        814901,
         14.667759210737
       ],
       [
         "HSC",
-        11000.0,
+        11000,
         9.82020633
       ],
       [
         "TGC",
-        14070695.0,
+        14070695,
         16.0892980107425
       ],
       [
         "LOT",
-        70734766.0,
+        70734766,
         47.467236704577
       ],
       [
         "VIVI",
-        10816289.0,
+        10816289,
         1.1214510148855201
       ],
       [
         "FMX",
-        1196258.0,
+        1196258,
         1.02929119880608
       ]
-    ],
-    "TB1vS3FETs7eREwfEf3mRo6vSpbRWBWAzZ": [
+    ]
+  },
+  {
+    "_id": "TB1vS3FETs7eREwfEf3mRo6vSpbRWBWAzZ",
+    "tokens": [
       [
         "TRX",
         3204.463059,
@@ -85,32 +89,32 @@ export const demo_breakdown_data = {
       ],
       [
         "TRX (Frozen)",
-        39.0,
-        39.0
+        39,
+        39
       ],
       [
         "USDT",
         5541.571662,
-        89219.30375820001
+        87066.29161456713
       ],
       [
         "BTT",
         1309280.075073,
-        74796.73699911695
+        79732.53801179556
       ],
       [
         "WIN",
         2341.488901,
-        15.288845906933322
+        15.235326729272053
       ],
       [
         "JST",
         17.704526992310935,
-        30.074322561602234
+        29.487488247949248
       ],
       [
         "TRUC",
-        5545076.0,
+        5545076,
         2772.538
       ],
       [
@@ -125,16 +129,19 @@ export const demo_breakdown_data = {
       ],
       [
         "EMS",
-        1003600.0,
-        10036.0
+        1003600,
+        10036
       ],
       [
         "TERC",
-        8.0,
+        8,
         8.8810768
       ]
-    ],
-    "TEpK7cZooxRQugwuKqTKayGi865MQKdvVu": [
+    ]
+  },
+  {
+    "_id": "TEpK7cZooxRQugwuKqTKayGi865MQKdvVu",
+    "tokens": [
       [
         "TRX",
         1044.559122,
@@ -142,33 +149,33 @@ export const demo_breakdown_data = {
       ],
       [
         "TRX (Frozen)",
-        1510.0,
-        1510.0
+        1510,
+        1510
       ],
       [
         "USDT",
         0.232374,
-        3.7412214
+        3.650939423264905
       ],
       [
         "BTT",
         35.255981,
-        2.0141086607125174
+        2.147018730938
       ],
       [
         "WIN",
         196253.259414,
-        1281.4435467247415
+        1276.9578055996415
       ],
       [
         "JST",
         6.008683391913989,
-        10.206829167333558
+        10.007665326594783
       ],
       [
         "SEED",
         53.575198,
-        80.362797
+        91.0778366
       ],
       [
         "SCC",
@@ -177,18 +184,24 @@ export const demo_breakdown_data = {
       ],
       [
         "VENA",
-        53.0,
+        53,
         1.802
       ]
-    ],
-    "TW4JPwJe4W6pZf2NYpQpErnC9Z1QWpsCnV": [
+    ]
+  },
+  {
+    "_id": "TW4JPwJe4W6pZf2NYpQpErnC9Z1QWpsCnV",
+    "tokens": [
       [
         "TRX",
         139.969125,
         139.969125
       ]
-    ],
-    "TVmxoHmGxJ1WLgBKmqZhe59vgd8ergkpuV": [
+    ]
+  },
+  {
+    "_id": "TVmxoHmGxJ1WLgBKmqZhe59vgd8ergkpuV",
+    "tokens": [
       [
         "TRX",
         122.756985,
@@ -197,56 +210,77 @@ export const demo_breakdown_data = {
       [
         "BTT",
         92.002301,
-        5.255920442252902
+        5.602756126298
       ],
       [
         "SEED",
         190.971978,
-        286.457967
+        324.6523626
       ],
       [
         "SCC",
         15.220056,
         9.1320336
       ]
-    ],
-    "TNrnVb8zD1i4ypH7n1X4vgadLRQmTnPD7S": [
+    ]
+  },
+  {
+    "_id": "TNrnVb8zD1i4ypH7n1X4vgadLRQmTnPD7S",
+    "tokens": [
       [
         "TRX (Frozen)",
-        25.0,
-        25.0
+        25,
+        25
       ]
-    ],
-    "TKgogg5yo3GWSVfdFmvd8MgtYoZVmks7Ge": [
+    ]
+  },
+  {
+    "_id": "TKgogg5yo3GWSVfdFmvd8MgtYoZVmks7Ge",
+    "tokens": [
       [
         "BTT",
         93.355976,
-        5.333253378791811
+        5.685192226448
       ]
-    ],
-    "TKur11NMLxYHuhYBBAHJcxhrrSPQ9kJzHw": [
+    ]
+  },
+  {
+    "_id": "TKur11NMLxYHuhYBBAHJcxhrrSPQ9kJzHw",
+    "tokens": [
       [
         "TRX (Frozen)",
-        20.0,
-        20.0
+        20,
+        20
       ]
-    ],
-    "TAxYw4YMfPuujKHuYWbkDe1fRHMs8HkGcS": [
+    ]
+  },
+  {
+    "_id": "TAxYw4YMfPuujKHuYWbkDe1fRHMs8HkGcS",
+    "tokens": [
       [
         "BTT",
         129.410417,
-        7.39297657512688
+        7.8808355744659995
       ]
-    ],
-    "TDLS1TRWnXdC8GMuQmETishHgd3EzfmD5B": [
+    ]
+  },
+  {
+    "_id": "TDLS1TRWnXdC8GMuQmETishHgd3EzfmD5B",
+    "tokens": [
       [
         "BTT",
         125.632211,
-        7.177134689276193
+        7.650750385478
       ]
-    ],
-    "TBfeXqTbdy3mYXe1znfsurqtcu8kx4zWmh": [],
-    "TPwRc3Jqjq7uvQT75E4eNFABHcicU356YS": [
+    ]
+  },
+  {
+    "_id": "TBfeXqTbdy3mYXe1znfsurqtcu8kx4zWmh",
+    "tokens": []
+  },
+  {
+    "_id": "TPwRc3Jqjq7uvQT75E4eNFABHcicU356YS",
+    "tokens": [
       [
         "TRX",
         3026.550308,
@@ -254,18 +288,18 @@ export const demo_breakdown_data = {
       ],
       [
         "TRX (Frozen)",
-        150.0,
-        150.0
+        150,
+        150
       ],
       [
         "WIN",
         699.69528,
-        4.568688458510256
+        4.552695593464824
       ],
       [
         "JST",
         8.134307982392164,
-        13.817584744518852
+        13.5479649436644
       ],
       [
         "SCC",
@@ -274,11 +308,14 @@ export const demo_breakdown_data = {
       ],
       [
         "TERC",
-        136.0,
+        136,
         150.9783056
       ]
-    ],
-    "TA4vGA6hEpA44AVWPztoFPVJRDuQYd3g4f": [
+    ]
+  },
+  {
+    "_id": "TA4vGA6hEpA44AVWPztoFPVJRDuQYd3g4f",
+    "tokens": [
       [
         "TRX",
         43.04007,
@@ -286,30 +323,39 @@ export const demo_breakdown_data = {
       ],
       [
         "TRUC",
-        100606.0,
+        100606,
         50.303000000000004
       ]
-    ],
-    "COTI": [
+    ]
+  },
+  {
+    "_id": "COTI",
+    "tokens": [
       [
         "COTI",
         328585.19999999995,
-        2392052.704924403
+        2426982.333954249
       ]
-    ],
-    "GOVI": [
+    ]
+  },
+  {
+    "_id": "GOVI",
+    "tokens": [
       [
         "GOVI",
-        5154.0,
-        200307.12356035828
+        5154,
+        204337.1825933734
       ]
-    ],
-    "PAC": [
+    ]
+  },
+  {
+    "_id": "PAC",
+    "tokens": [
       [
         "PAC",
         181736,
-        44015.87520545997
+        44172.0381624241
       ]
     ]
   }
-}
+]

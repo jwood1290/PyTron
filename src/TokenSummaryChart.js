@@ -18,9 +18,9 @@ function parseData(props,addr) {
 
   var output = [];
   var addr_tokens = {};
-  for (const [k,v] of Object.entries(props.data.breakdown)) {
-    if (['All',k].includes(addr)) {
-      v.tokens.forEach(i => {
+  props.data.breakdown.forEach(item => {
+    if (['All',item._id].includes(addr)) {
+      item.tokens.forEach(i => {
         var t_name = i[0];
         if (t_name.includes("TRX")) {
           t_name = 'TRX';
@@ -32,7 +32,7 @@ function parseData(props,addr) {
         addr_tokens[t_name].trx += i[2];
       })
     }
-  }
+  })
 
   for (const [k,v] of Object.entries(addr_tokens)) {
     output.push({

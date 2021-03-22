@@ -152,7 +152,7 @@ export default function Dashboard(props) {
 
   const classes = useStyles();
   const midHeightPaper = clsx(classes.paper, classes.midHeight);
-  const limitHeightPaper = clsx(classes.paper, classes.limitHeight);
+  // const limitHeightPaper = clsx(classes.paper, classes.limitHeight);
   const midHeightTable = clsx(classes.paper, classes.table);
   const [currency,setCurrency] = React.useState('usd');
   const [is_split,setSplit] = React.useState(false);
@@ -210,14 +210,15 @@ export default function Dashboard(props) {
   }
 
   var address_choices = [<MenuItem value="All" key="All">All</MenuItem>];
-  for (const addr in props.data.breakdown) {
+  props.data.breakdown.forEach(item => {
+    var addr = item._id;
     var short_addr = addr.substr(0,3) + '...' + addr.substr(addr.length-3);
     if (addr.length > 10) {
       address_choices.push(<MenuItem value={addr} key={addr}>{short_addr}</MenuItem>)
     } else {
       address_choices.push(<MenuItem value={addr} key={addr}>{addr}</MenuItem>)
     }
-  }
+  })
 
   const is_mobile = (winwidth < 500);
   const dash_title = is_mobile ? 'PyTron':'PyTron Dashboard';
@@ -283,7 +284,7 @@ export default function Dashboard(props) {
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Paper className={limitHeightPaper}>
+              <Paper className={midHeightPaper}>
                 <Toolbar disableGutters>
                   <Typography variant="h5" color="primary" gutterBottom className={classes.subTitle}>
                     Address Breakdown
@@ -293,7 +294,7 @@ export default function Dashboard(props) {
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Paper className={limitHeightPaper}>
+              <Paper className={midHeightPaper}>
                 <Toolbar disableGutters>
                   <Typography variant="h5" color="primary" gutterBottom className={classes.subTitle}>
                     Token Breakdown
