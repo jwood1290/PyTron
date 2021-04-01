@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'Center',
     fontWeight: 'bold',
     flexGrow: 1,
+    overflow: 'inherit',
   },
   subTitle: {
     flexGrow: 1,
@@ -291,7 +292,7 @@ export default function Dashboard(props) {
             justify="space-between"
             alignItems="center">
             <Grid
-              xs
+              xs={4}
               item
               container
               direction="column"
@@ -301,11 +302,11 @@ export default function Dashboard(props) {
               <Typography variant="body2" color="primary" align="left">
                 {'Updated: ' + last_date}
               </Typography>
-              <Typography variant="body2" color="primary" align="right">
+              {is_mobile ? null:(<Typography variant="body2" color="primary" align="right">
                 {'v' + pkg_info.version}
-              </Typography>
+              </Typography>)}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <Typography component="h1" variant="h5" color="primary" noWrap className={classes.title}>
                 <Box fontWeight="fontWeightBold" m={1}>
                   {dash_title}
@@ -313,8 +314,7 @@ export default function Dashboard(props) {
               </Typography>
             </Grid>
             <Grid
-              xs
-              item
+              xs={4}
               container
               direction="row"
               justify="flex-end"
