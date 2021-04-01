@@ -10,6 +10,12 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+function parse_url(url) {
+  return fetch(url)
+  .then(res => res.json())
+  .catch(err => console.log('Error parsing URL: ' + err))
+}
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +26,8 @@ export default class App extends Component {
       failedLogin: false,
       is_mobile: ((window.innerWidth || window.outerWidth) < 750),
       data: null,
+      updatePass: false,
+      updateFail: false
     }
   }
 
@@ -43,9 +51,31 @@ export default class App extends Component {
     }
   };
 
+  sendUpdate = async () => {
+    const update = await parse_url(process.env.REACT_APP_FORCE_UPDATE);
+    if (update.result) {
+      this.setState({
+        updatePass: true
+      });
+    } else {
+      this.setState({
+        updateFail: true
+      });
+    }
+  };
+
   handleClose = (event, reason) => {
     if (reason !== 'clickaway') {
       this.setState({hasError:false});
+    }
+  };
+
+  handleUpdateClose = (event, reason) => {
+    if (reason !== 'clickaway') {
+      this.setState({
+        updatePass: false,
+        updateFail: false,
+      });
     }
   };
 
@@ -71,7 +101,11 @@ export default class App extends Component {
         secondary: { main:orange },
       }
     });
-    const appProps = {...this.state,login:this.loadDashboard,changeState:this.changeState};
+    const appProps = {...this.state,
+      login:this.loadDashboard,
+      changeState:this.changeState,
+      sendUpdate:this.sendUpdate,
+    };
     const page = getPage(appProps);
 
     return (
@@ -84,6 +118,26 @@ export default class App extends Component {
         >
           <Alert onClose={(e,r) => {this.handleClose(e,r)}} severity="warning">
             Unable to connect to database. Try again later.
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          anchorOrigin={{vertical:'top',horizontal:'center'}}
+          open={this.state.updatePass} 
+          autoHideDuration={6000} 
+          onClose={(e,r) => {this.handleUpdateClose(e,r)}}
+        >
+          <Alert onClose={(e,r) => {this.handleUpdateClose(e,r)}} severity="success">
+            Forced update successful!
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          anchorOrigin={{vertical:'top',horizontal:'center'}}
+          open={this.state.updateFail} 
+          autoHideDuration={6000} 
+          onClose={(e,r) => {this.handleUpdateClose(e,r)}}
+        >
+          <Alert onClose={(e,r) => {this.handleUpdateClose(e,r)}} severity="error">
+            Forced update failed. Try again later.
           </Alert>
         </Snackbar>
       </ThemeProvider>

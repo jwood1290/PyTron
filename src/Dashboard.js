@@ -20,6 +20,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Modal from '@material-ui/core/Modal';
+import TextField from '@material-ui/core/TextField';
+import WarningIcon from '@material-ui/icons/Warning';
+import UpdateIcon from '@material-ui/icons/Update';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 const drawerWidth = 240;
@@ -59,6 +68,10 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.secondary.main,
+  },
   menuButton: {
     marginRight: 36,
   },
@@ -69,7 +82,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'Center',
     fontWeight: 'bold',
     flexGrow: 1,
-    // paddingLeft: '39px',
   },
   subTitle: {
     flexGrow: 1,
@@ -112,6 +124,14 @@ const useStyles = makeStyles((theme) => ({
   },
   menuPaper: {
     maxHeight: 200,
+  },
+  modal: {
+    position: 'absolute',
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    outline: 0
   },
   midHeight: {
     height: 400,
@@ -158,6 +178,10 @@ export default function Dashboard(props) {
   const [is_split,setSplit] = React.useState(false);
   const [token_id,changeToken] = React.useState('TRX15');
   const [token_address,setTokenAddr] = React.useState('All');
+  const [editAsset, setAssetModal] = React.useState(false);
+  const [editUpdate, setUpdateModal] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
+  const [asset_id,setAssetID] = React.useState('');
   const [winwidth,setWidth] = React.useState(window.innerWidth || window.outerWidth);
 
   React.useEffect(() => {
@@ -169,6 +193,10 @@ export default function Dashboard(props) {
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const toggleSplit = (event) => {
+    setSplit(event.target.checked);
+  };
 
   const toggleCurrency = (event) => {
     setCurrency(event.target.value);
@@ -182,9 +210,31 @@ export default function Dashboard(props) {
     setTokenAddr(event.target.value);
   };
 
-  const toggleSplit = (event) => {
-    setSplit(event.target.checked);
+  const openEditAsset = () => {
+    setAssetModal(true);
   };
+
+  const closeEditAsset = () => {
+    setAssetModal(false);
+  };
+
+  const openUpdate = () => {
+    setUpdateModal(true);
+  };
+
+  const closeUpdate = () => {
+    setUpdateModal(false);
+  };
+
+  const forceUpdate = () => {
+    props.sendUpdate();
+    setUpdateModal(false);
+    setLoading(true);
+  }
+
+  const changeAssetID = (event) => {
+    setAssetID(event.target.value)
+  }
 
   var show = true;
   var last_date = 'DEMO';
@@ -201,13 +251,16 @@ export default function Dashboard(props) {
     props = {...props,classes,is_trx,winwidth,chartData,token_id,is_split,token_address};
   }
 
+  var asset_choices = [];
   var token_choices = [<MenuItem value="TRX15" key="TRX">TRX</MenuItem>];
   const skip_names = ['TRX15','last','trx','usd','split_data','breakdown']
   for (const token in props.data) {
     if (!(skip_names.includes(token))) {
       token_choices.push(<MenuItem value={token} key={token}>{token}</MenuItem>)
+      asset_choices.push(<MenuItem value={token} key={token}>{token}</MenuItem>)
     }
   }
+  asset_choices.push(<MenuItem value="other" key="other">Other</MenuItem>)
 
   var address_choices = [<MenuItem value="All" key="All">All</MenuItem>];
   props.data.breakdown.forEach(item => {
@@ -222,6 +275,11 @@ export default function Dashboard(props) {
 
   const is_mobile = (winwidth < 500);
   const dash_title = is_mobile ? 'PyTron':'PyTron Dashboard';
+  if (isLoading) {
+    if (props.updatePass || props.updateFail) {
+      setLoading(false);
+    }
+  }
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -232,9 +290,19 @@ export default function Dashboard(props) {
             direction="row"
             justify="space-between"
             alignItems="center">
-            <Grid item xs>
+            <Grid
+              xs
+              item
+              container
+              direction="column"
+              justify="space-between"
+              alignItems="flex-start"
+            >
               <Typography variant="body2" color="primary" align="left">
                 {'Updated: ' + last_date}
+              </Typography>
+              <Typography variant="body2" color="primary" align="right">
+                {'v' + pkg_info.version}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -244,10 +312,20 @@ export default function Dashboard(props) {
                 </Box>
               </Typography>
             </Grid>
-            <Grid item xs>
-              <Typography variant="body2" color="primary" align="right">
-                {'v' + pkg_info.version}
-              </Typography>
+            <Grid
+              xs
+              item
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="center"
+            >
+              <IconButton aria-label="edit-asset" color="secondary" onClick={openEditAsset}>
+                <MonetizationOnIcon />
+              </IconButton>
+              <IconButton aria-label="edit-asset2" color="secondary" onClick={openUpdate}>
+                <UpdateIcon />
+              </IconButton>
             </Grid>
           </Grid>
         </Toolbar>
@@ -341,6 +419,117 @@ export default function Dashboard(props) {
             </Grid>
           </Grid>
         </Container>
+        <Modal
+          open={editAsset}
+          onClose={closeEditAsset}
+          aria-labelledby="edit-asset-label"
+          aria-describedby="edit-asset-description"
+        >
+          <div 
+            className={classes.modal} 
+            style={{
+              top:'50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width:is_mobile ? '90%':'50%'
+            }}
+          >
+            <h2 id="edit-asset-label">Asset Editor</h2>
+            <p id="edit-asset-description">
+              Choose a <b><em>token</em></b> from the list (or enter a new token) and enter the <b><em>amount</em></b> you want to add to the total balance. The <b><em>price</em></b> is optional (defaults to 0, which would be the equivalent of a free drop).
+            </p>
+            <Grid
+              container
+              direction="column"
+              justify="space-between"
+              alignItems="stretch"
+            >
+              <FormControl variant="outlined" className={classes.selectCenter} style={{margin:'10px'}}>
+                <InputLabel id="asset-choices-select-label">Token</InputLabel>
+                <Select
+                  labelId="asset-choices-select-label"
+                  id="asset-choices-select"
+                  value={asset_id}
+                  onChange={changeAssetID}
+                  label="Token"
+                  MenuProps={{classes:{paper:classes.menuPaper}}}
+                >
+                  {token_choices}
+                </Select>
+              </FormControl>
+              <TextField
+                required
+                id="asset-amount"
+                label="Amount"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                defaultValue={0}
+                variant="outlined"
+                style={{margin:'10px'}}
+              />
+              <TextField
+                required
+                id="asset-price"
+                label="Price"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                defaultValue={0}
+                variant="outlined"
+                style={{margin:'10px'}}
+              />
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="center"
+            >
+              <Button variant="contained" disabled style={{margin:'10px'}}>
+                Submit
+              </Button>
+            </Grid>
+          </div>
+        </Modal>
+        <Modal
+          open={editUpdate}
+          onClose={closeUpdate}
+          aria-labelledby="update-label"
+          aria-describedby="update-description"
+        >
+          <div 
+            className={classes.modal} 
+            style={{
+              top:'50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width:is_mobile ? '90%':'50%'
+            }}
+          >
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="stretch"
+            >
+              <h2 id="update-label" style={{textAlign:'center'}}>Are you sure you want to force an update?</h2>
+              <Button 
+                variant="contained" 
+                color="secondary" 
+                startIcon={<WarningIcon />}
+                onClick={forceUpdate}
+              >
+                Force Update
+              </Button>
+            </Grid>
+          </div>
+        </Modal>
+        <Backdrop className={classes.backdrop} open={isLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </main>):null}
     </div>
   );
