@@ -119,7 +119,11 @@ async function get_other_history(url,trx_data,demo) {
     data = other_data;
   } else {
     try {
-      data = await parse_url(url);
+      const unfiltered_data = await parse_url(url);
+      for (const [k,v] of Object.entries(unfiltered_data)) {
+        if (k === '_id' || k === 'last_updated') { continue; };
+        data[k] = v.filter(entry => {return entry.date.includes('12:00')});
+      }
     } catch (err) {
       console.log(err);
       data = other_data;
