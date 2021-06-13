@@ -20,15 +20,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Modal from '@material-ui/core/Modal';
-import TextField from '@material-ui/core/TextField';
-import WarningIcon from '@material-ui/icons/Warning';
 import UpdateIcon from '@material-ui/icons/Update';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import EditAssetModal from './EditAssetModal';
+import ForceUpdateModal from './ForceUpdateModal';
 
 
 const drawerWidth = 240;
@@ -182,7 +180,6 @@ export default function Dashboard(props) {
   const [editAsset, setAssetModal] = React.useState(false);
   const [editUpdate, setUpdateModal] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
-  const [asset_id,setAssetID] = React.useState('');
   const [winwidth,setWidth] = React.useState(window.innerWidth || window.outerWidth);
 
   React.useEffect(() => {
@@ -227,15 +224,7 @@ export default function Dashboard(props) {
     setUpdateModal(false);
   };
 
-  const forceUpdate = () => {
-    props.sendUpdate();
-    setUpdateModal(false);
-    setLoading(true);
-  }
-
-  const changeAssetID = (event) => {
-    setAssetID(event.target.value)
-  }
+  const skip_names = ['TRX15','last','trx','usd','split_data','breakdown'];
 
   var show = true;
   var last_date = 'DEMO';
@@ -249,19 +238,17 @@ export default function Dashboard(props) {
     const year = String(dt.getFullYear()).substring(2,4);
     last_date = String(dt.getMonth() + 1) + "/" + String(dt.getDate()) + "/" + year;
 
-    props = {...props,classes,is_trx,winwidth,chartData,token_id,is_split,token_address};
+    props = {...props,classes,is_trx,winwidth,chartData,token_id,is_split,
+              token_address,editAsset,closeEditAsset,skip_names,editUpdate,
+              closeUpdate,setUpdateModal,setLoading};
   }
 
-  var asset_choices = [];
   var token_choices = [<MenuItem value="TRX15" key="TRX">TRX</MenuItem>];
-  const skip_names = ['TRX15','last','trx','usd','split_data','breakdown']
   for (const token in props.data) {
     if (!(skip_names.includes(token))) {
       token_choices.push(<MenuItem value={token} key={token}>{token}</MenuItem>)
-      asset_choices.push(<MenuItem value={token} key={token}>{token}</MenuItem>)
     }
   }
-  asset_choices.push(<MenuItem value="other" key="other">Other</MenuItem>)
 
   var address_choices = [<MenuItem value="All" key="All">All</MenuItem>];
   props.data.breakdown.forEach(item => {
@@ -315,6 +302,7 @@ export default function Dashboard(props) {
             </Grid>
             <Grid
               xs={4}
+              item
               container
               direction="row"
               justify="flex-end"
@@ -419,114 +407,8 @@ export default function Dashboard(props) {
             </Grid>
           </Grid>
         </Container>
-        <Modal
-          open={editAsset}
-          onClose={closeEditAsset}
-          aria-labelledby="edit-asset-label"
-          aria-describedby="edit-asset-description"
-        >
-          <div 
-            className={classes.modal} 
-            style={{
-              top:'50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width:is_mobile ? '90%':'50%'
-            }}
-          >
-            <h2 id="edit-asset-label">Asset Editor</h2>
-            <p id="edit-asset-description">
-              Choose a <b><em>token</em></b> from the list (or enter a new token) and enter the <b><em>amount</em></b> you want to add to the total balance. The <b><em>price</em></b> is optional (defaults to 0, which would be the equivalent of a free drop).
-            </p>
-            <Grid
-              container
-              direction="column"
-              justify="space-between"
-              alignItems="stretch"
-            >
-              <FormControl variant="outlined" className={classes.selectCenter} style={{margin:'10px'}}>
-                <InputLabel id="asset-choices-select-label">Token</InputLabel>
-                <Select
-                  labelId="asset-choices-select-label"
-                  id="asset-choices-select"
-                  value={asset_id}
-                  onChange={changeAssetID}
-                  label="Token"
-                  MenuProps={{classes:{paper:classes.menuPaper}}}
-                >
-                  {token_choices}
-                </Select>
-              </FormControl>
-              <TextField
-                required
-                id="asset-amount"
-                label="Amount"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                defaultValue={0}
-                variant="outlined"
-                style={{margin:'10px'}}
-              />
-              <TextField
-                required
-                id="asset-price"
-                label="Price"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                defaultValue={0}
-                variant="outlined"
-                style={{margin:'10px'}}
-              />
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              justify="flex-end"
-              alignItems="center"
-            >
-              <Button variant="contained" disabled style={{margin:'10px'}}>
-                Submit
-              </Button>
-            </Grid>
-          </div>
-        </Modal>
-        <Modal
-          open={editUpdate}
-          onClose={closeUpdate}
-          aria-labelledby="update-label"
-          aria-describedby="update-description"
-        >
-          <div 
-            className={classes.modal} 
-            style={{
-              top:'50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width:is_mobile ? '90%':'50%'
-            }}
-          >
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="stretch"
-            >
-              <h2 id="update-label" style={{textAlign:'center'}}>Are you sure you want to force an update?</h2>
-              <Button 
-                variant="contained" 
-                color="secondary" 
-                startIcon={<WarningIcon />}
-                onClick={forceUpdate}
-              >
-                Force Update
-              </Button>
-            </Grid>
-          </div>
-        </Modal>
+        <EditAssetModal {...props}/>
+        <ForceUpdateModal {...props}/>
         <Backdrop className={classes.backdrop} open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
