@@ -22,12 +22,14 @@ export default class App extends Component {
 
     this.state = {
       currPage: 'login',
+      // currPage: '',
       hasError: false,
       failedLogin: false,
       is_mobile: ((window.innerWidth || window.outerWidth) < 750),
       data: null,
-      updatePass: false,
-      updateFail: false
+      updateSent: false,
+      updateSuccess: false,
+      updateMessage: ''
     }
   }
 
@@ -53,15 +55,33 @@ export default class App extends Component {
 
   sendUpdate = async () => {
     const update = await parse_url(process.env.REACT_APP_FORCE_UPDATE);
+    var msg = '';
     if (update.result) {
-      this.setState({
-        updatePass: true
-      });
+      msg = 'Forced update successful!';
     } else {
-      this.setState({
-        updateFail: true
-      });
+      msg = 'Forced update failed. Try again later.';
     }
+    this.setState({
+      updateSent: true,
+      updateSuccess: update.result,
+      updateMessage: msg
+    });
+  };
+  
+  updateAsset = async (params) => {
+    var asset_url = process.env.REACT_APP_EDIT_ASSET + process.env.REACT_APP_LOGIN_PASS + params;
+    const update = await parse_url(asset_url);
+    var msg = '';
+    if (update.result) {
+      msg = 'Asset updated successfully!';
+    } else {
+      msg = 'Asset failed to update. Try again later.';
+    }
+    this.setState({
+      updateSent: true,
+      updateSuccess: update.result,
+      updateMessage: msg
+    });
   };
 
   handleClose = (event, reason) => {
@@ -73,8 +93,7 @@ export default class App extends Component {
   handleUpdateClose = (event, reason) => {
     if (reason !== 'clickaway') {
       this.setState({
-        updatePass: false,
-        updateFail: false,
+        updateSent: false
       });
     }
   };
@@ -105,7 +124,12 @@ export default class App extends Component {
       login:this.loadDashboard,
       changeState:this.changeState,
       sendUpdate:this.sendUpdate,
+      updateAsset:this.updateAsset,
     };
+
+    if (this.state.currPage === '') {
+      this.loadDashboard(true);
+    }
     const page = getPage(appProps);
 
     return (
@@ -122,22 +146,13 @@ export default class App extends Component {
         </Snackbar>
         <Snackbar 
           anchorOrigin={{vertical:'top',horizontal:'center'}}
-          open={this.state.updatePass} 
+          open={this.state.updateSent} 
           autoHideDuration={6000} 
           onClose={(e,r) => {this.handleUpdateClose(e,r)}}
         >
-          <Alert onClose={(e,r) => {this.handleUpdateClose(e,r)}} severity="success">
-            Forced update successful!
-          </Alert>
-        </Snackbar>
-        <Snackbar 
-          anchorOrigin={{vertical:'top',horizontal:'center'}}
-          open={this.state.updateFail} 
-          autoHideDuration={6000} 
-          onClose={(e,r) => {this.handleUpdateClose(e,r)}}
-        >
-          <Alert onClose={(e,r) => {this.handleUpdateClose(e,r)}} severity="error">
-            Forced update failed. Try again later.
+          <Alert onClose={(e,r) => {this.handleUpdateClose(e,r)}} 
+            severity={this.state.updateSuccess ? "success":"error"}>
+            {this.state.updateMessage}
           </Alert>
         </Snackbar>
       </ThemeProvider>

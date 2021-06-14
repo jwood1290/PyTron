@@ -11,12 +11,27 @@ import StepLabel from '@material-ui/core/StepLabel';
 import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
+
+function dictToQuery(obj) {
+  var str = [];
+  for (const k in obj) {
+    if (obj[k] !== '') {
+      str.push(encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]));
+    }
+  }
+  return "&" + str.join("&");
+}
 
 function getSteps() {
   return [
     'Select Token',
-    'Edit Balance',
-    'Edit Price'
+    'Edit Value',
+    'Review'
   ];
 }
 
@@ -25,10 +40,17 @@ export default function EditAssetModal(props) {
   const [asset_name,setAssetName] = React.useState('');
   const [asset_ticker,setAssetTicker] = React.useState('');
   const [asset_amount,setAssetAmount] = React.useState(0);
-  const [asset_price,setAssetPrice] = React.useState(0);
+  const [asset_price,setAssetPrice] = React.useState("0.00");
   const [activeStep, setActiveStep] = React.useState(0);
   const [is_add, setAddRemove] = React.useState(true);
   const steps = getSteps();
+
+  const asset_inputs = {
+    'id': asset_name,
+    'ticker': asset_ticker,
+    'amount': asset_amount*(is_add ? 1.0:-1.0),
+    'price': asset_price ? asset_price*1.00:0.00
+  }
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -44,8 +66,14 @@ export default function EditAssetModal(props) {
   };
 
   const handleSubmit = () => {
+    // console.dir(asset_inputs);
+    const params = dictToQuery(asset_inputs);
+    props.updateAsset(params);
+    // console.dir(asset_inputs);
+    // console.log(params);
     setActiveStep(0);
     props.closeEditAsset();
+    props.setLoading(true);
   };
 
   const changeAssetID = (event) => {
@@ -81,8 +109,11 @@ export default function EditAssetModal(props) {
   }
 
   const changeAssetPrice = (event) => {
-    var price = event.target.value || 0;
-    if (price < 0) {price = 0};
+    var price = event.target.value || "";
+    price = price.replace(/[^0-9.-]+/g,"");
+    if ((price*1.0) < 0) {
+      price = "0.00";
+    }
     setAssetPrice(price);
   }
 
@@ -98,6 +129,9 @@ export default function EditAssetModal(props) {
     }
   }
   asset_choices.push(<MenuItem value="other" key="other">Other</MenuItem>)
+
+  const str_ticker = (asset_id === 'other') ? asset_ticker:asset_name.toLowerCase();
+  const str_price = "$" + asset_price.toString();
 
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
@@ -133,14 +167,13 @@ export default function EditAssetModal(props) {
                 }}
                 variant="outlined"
                 style={{margin:'10px'}}
-                onChange={changeAssetName}
+                onChange={changeAssetName} 
               />
             ):null}
             {asset_id === 'other' ? (
               <TextField
-                required
                 id="asset-ticker"
-                label="Token Ticker"
+                label="Token Ticker (optional)"
                 value={asset_ticker}
                 InputLabelProps={{
                   shrink: true,
@@ -156,72 +189,184 @@ export default function EditAssetModal(props) {
         return (
           <Grid
             container
-            direction="column"
-            justify="space-between"
-            alignItems="stretch"
+            spacing={3}
           >
-            <TextField
-              required
-              id="asset-amount"
-              label="Amount"
-              value={asset_amount}
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              variant="outlined"
-              style={{margin:'10px'}}
-              onChange={changeAssetAmount}
-            />
-            <Grid
-              container
-              direction="row"
-              justify="center"
-              alignItems="center"
-            >
-              <Button 
+            <Grid item xs={12}>
+              <TextField
                 fullWidth
+                required
+                id="asset-amount"
+                label="Amount"
+                value={asset_amount}
+                type="number"
+                variant="outlined"
+                onChange={changeAssetAmount}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SwapVerticalCircleIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined" required>
+                <InputLabel htmlFor="outlined-adornment-amount">Price</InputLabel>
+                <OutlinedInput
+                  label="Price"
+                  id="outlined-adornment-amount"
+                  value={asset_price}
+                  onChange={changeAssetPrice}
+                  aria-describedby="price-helper-text"
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <AttachMoneyIcon />
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText id="price-helper-text">Leave price at $0.00 for rewards/drops and select "BUY (ADD)"</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                size="large"
                 variant="outlined"
                 onClick={changeToAdd}
-                style={{
-                  marginRight:'2.5%',
-                  marginLeft:'2.5%',
-                  width:'45%'
-                }}
                 color={is_add ? "secondary":"primary"}>
-                ADD
+                BUY (ADD)
               </Button>
+            </Grid>
+            <Grid item xs={6}>
               <Button 
                 fullWidth
-                variant="outlined" 
-                style={{
-                  marginRight:'2.5%',
-                  marginLeft:'2.5%',
-                  width:'45%'
-                }}
+                size="large"
+                variant="outlined"
                 onClick={changeToRemove}
                 color={is_add ? "primary":"secondary"}>
-                REMOVE
+                SELL (REMOVE)
               </Button>
             </Grid>
           </Grid>
         );
       case 2:
         return (
-          <TextField
-            required
-            fullWidth
-            id="asset-price"
-            label="Price"
-            value={asset_price}
-            type="number"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-            style={{margin:'10px'}}
-            onChange={changeAssetPrice}
-          />
+          <Grid
+            container
+            spacing={1}
+            justify="center"
+            direction="column"
+            alignItems="stretch"
+          >
+            <Grid
+              item
+              xs={12}
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={6}>
+                <TextField
+                  disabled
+                  fullWidth
+                  id="asset-name-disabled"
+                  value={asset_inputs.id}
+                  variant="outlined"
+                  inputProps={{style:{textAlign:'center'}}}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" style={{width:'50px'}}>
+                        NAME:
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={6}>
+                <TextField
+                  disabled
+                  fullWidth
+                  id="asset-ticker-disabled"
+                  value={str_ticker}
+                  variant="outlined"
+                  inputProps={{style:{textAlign:'center'}}}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" style={{width:'50px'}}>
+                        TICKER:
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={6}>
+                <TextField
+                  disabled
+                  fullWidth
+                  id="asset-amount-disabled"
+                  value={asset_inputs.amount}
+                  variant="outlined"
+                  inputProps={{style:{textAlign:'center'}}}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" style={{width:'50px'}}>
+                        AMOUNT:
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={6}>
+                <TextField
+                  disabled
+                  fullWidth
+                  id="asset-price-disabled"
+                  value={str_price}
+                  variant="outlined"
+                  inputProps={{style:{textAlign:'center'}}}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" style={{width:'50px'}}>
+                        PRICE:
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
         );
       default:
         return (
@@ -243,10 +388,10 @@ export default function EditAssetModal(props) {
       <div 
         className={classes.modal} 
         style={{
-          top:'50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width:is_mobile ? '90%':'50%',
+          top: is_mobile ? '20%':'50%',
+          left: is_mobile ? '5%':'50%',
+          transform: is_mobile ? null:'translate(-50%, -50%)',
+          width: is_mobile ? '90%':'50%',
         }}
       >
         {/*<div style={{width:'100%'}}>*/}
@@ -303,7 +448,7 @@ export default function EditAssetModal(props) {
               <Button 
                 variant="contained" 
                 color={is_last ? "secondary":"primary"}
-                disabled={is_last}
+                // disabled={is_last}
                 onClick={is_last ? handleSubmit:handleNext}>
                 {is_last ? 'Submit':'Next'}
               </Button>

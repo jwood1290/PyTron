@@ -121,6 +121,17 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
     flexDirection: 'column',
   },
+  paperList: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '40%',
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
+    },
+  },
   menuPaper: {
     maxHeight: 200,
   },
@@ -264,7 +275,7 @@ export default function Dashboard(props) {
   const is_mobile = (winwidth < 500);
   const dash_title = is_mobile ? 'PyTron':'PyTron Dashboard';
   if (isLoading) {
-    if (props.updatePass || props.updateFail) {
+    if (props.updateSent) {
       setLoading(false);
     }
   }
